@@ -11,7 +11,7 @@ spec:
     server: https://kubernetes.default.svc
   project: cluster-config
   source:
-    path: patch-me-see-overlays
+    path: clusters/overlays/rhoai-stable-2.25
     repoURL: https://github.com/moj-incub-auth/ai-accelerator.git
     targetRevision: primary
   syncPolicy:
