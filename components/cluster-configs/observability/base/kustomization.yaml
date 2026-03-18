@@ -11,6 +11,7 @@ resources:
   - service-monitor-vllm.yaml
   - service-monitor-search-api.yaml
   - prometheus-rules.yaml
+  - otel-app.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
