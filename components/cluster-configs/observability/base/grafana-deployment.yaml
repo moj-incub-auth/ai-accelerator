@@ -38,6 +38,19 @@ spec:
         app: grafana
     spec:
       serviceAccountName: grafana
+      initContainers:
+        - name: init-datasources
+          image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+          command: ['sh', '-c']
+          args:
+            - |
+              TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              sed "s|PLACEHOLDER_TOKEN|Bearer ${TOKEN}|g" /etc/grafana-cm/datasources.yaml > /etc/grafana-ds/datasources.yaml
+          volumeMounts:
+            - name: datasources
+              mountPath: /etc/grafana-cm
+            - name: datasources-rendered
+              mountPath: /etc/grafana-ds
       containers:
         - name: oauth-proxy
           image: registry.redhat.io/openshift4/ose-oauth-proxy:latest
@@ -99,7 +112,7 @@ spec:
           volumeMounts:
             - name: grafana-storage
               mountPath: /var/lib/grafana
-            - name: datasources
+            - name: datasources-rendered
               mountPath: /etc/grafana/provisioning/datasources
             - name: dashboards-provider
               mountPath: /etc/grafana/provisioning/dashboards
@@ -114,6 +127,8 @@ spec:
               memory: 256Mi
       volumes:
         - name: grafana-storage
+          emptyDir: {}
+        - name: datasources-rendered
           emptyDir: {}
         - name: datasources
           configMap:
