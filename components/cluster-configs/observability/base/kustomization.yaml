@@ -13,6 +13,15 @@ resources:
   - prometheus-rules.yaml
   - otel-app.yaml
 
+patches:
+  - target:
+      kind: Application
+      name: moj-otel-patches
+    patch: |
+      - op: replace
+        path: /metadata/namespace
+        value: openshift-gitops
+
 generatorOptions:
   disableNameSuffixHash: true
 
