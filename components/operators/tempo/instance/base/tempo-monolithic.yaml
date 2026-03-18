@@ -1,0 +1,20 @@
+apiVersion: tempo.grafana.com/v1alpha1
+kind: TempoMonolithic
+metadata:
+  name: tempo-moj
+  namespace: moj-observability
+spec:
+  storage:
+    traces:
+      backend: pv
+      size: 50Gi
+  jaegerui:
+    enabled: true
+    route:
+      enabled: true
+  multitenancy:
+    enabled: false
+  observability:
+    metrics:
+      serviceMonitors:
+        enabled: true

@@ -1,0 +1,22 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: moj-python-instrumentation
+  namespace: milvus
+spec:
+  exporter:
+    endpoint: http://moj-collector-collector.moj-observability.svc.cluster.local:4318
+  propagators:
+    - tracecontext
+    - baggage
+  python:
+    env:
+      - name: OTEL_PYTHON_LOG_CORRELATION
+        value: "true"
+      - name: OTEL_PYTHON_LOG_LEVEL
+        value: info
+      - name: OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED
+        value: "true"
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"

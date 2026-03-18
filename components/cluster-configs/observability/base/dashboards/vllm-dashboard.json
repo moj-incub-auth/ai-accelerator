@@ -1,0 +1,96 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "title": "Request Rate (req/s)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(vllm:request_success_total{namespace=\"vllm-serving\"}[5m])) by (model_name)",
+          "legendFormat": "{{ model_name }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
+    },
+    {
+      "title": "Generation Tokens/s",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(vllm:generation_tokens_total{namespace=\"vllm-serving\"}[5m])) by (model_name)",
+          "legendFormat": "{{ model_name }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
+    },
+    {
+      "title": "E2E Request Latency P95",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(vllm:e2e_request_latency_seconds_bucket{namespace=\"vllm-serving\"}[5m])) by (le, model_name))",
+          "legendFormat": "P95 {{ model_name }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    },
+    {
+      "title": "Time To First Token P95",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(vllm:time_to_first_token_seconds_bucket{namespace=\"vllm-serving\"}[5m])) by (le, model_name))",
+          "legendFormat": "TTFT P95 {{ model_name }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    },
+    {
+      "title": "KV Cache Utilization",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "vllm:gpu_cache_usage_perc{namespace=\"vllm-serving\"}",
+          "legendFormat": "{{ model_name }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit", "min": 0, "max": 1,
+          "thresholds": { "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 0.7 },
+            { "color": "red", "value": 0.9 }
+          ] }
+        }, "overrides": []
+      }
+    },
+    {
+      "title": "Pending Requests (Scheduler Queue)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [
+        {
+          "expr": "vllm:num_requests_waiting{namespace=\"vllm-serving\"}",
+          "legendFormat": "{{ model_name }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] }
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["vllm", "moj", "ai"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "vLLM Model Serving",
+  "uid": "moj-vllm-dashboard"
+}

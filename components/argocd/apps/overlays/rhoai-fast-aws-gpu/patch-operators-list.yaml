@@ -46,6 +46,16 @@ spec:
         values:
           name: redhat-build-of-kueue-operator
           path: components/operators/redhat-build-of-kueue/aggregate/overlays/stable-v1.1
+      - cluster: local
+        url: https://kubernetes.default.svc
+        values:
+          name: opentelemetry-operator
+          path: components/operators/opentelemetry/aggregate/overlays/default
+      - cluster: local
+        url: https://kubernetes.default.svc
+        values:
+          name: tempo-operator
+          path: components/operators/tempo/aggregate/overlays/default
 
       # - cluster: local
       #   url: https://kubernetes.default.svc

@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: moj-collector-metrics
+  namespace: moj-observability
+  labels:
+    app.kubernetes.io/part-of: moj-otel
+spec:
+  endpoints:
+    - port: prometheus
+      interval: 30s
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: opentelemetry-collector
+      app.kubernetes.io/instance: moj-observability.moj-collector
