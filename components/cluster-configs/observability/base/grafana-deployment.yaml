@@ -1,3 +1,24 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grafana
+  namespace: moj-observability
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.grafana: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"grafana"}}'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: grafana-cluster-monitoring-view
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-monitoring-view
+subjects:
+  - kind: ServiceAccount
+    name: grafana
+    namespace: moj-observability
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,7 +37,34 @@ spec:
       labels:
         app: grafana
     spec:
+      serviceAccountName: grafana
       containers:
+        - name: oauth-proxy
+          image: registry.redhat.io/openshift4/ose-oauth-proxy:latest
+          ports:
+            - containerPort: 8443
+              name: proxy
+              protocol: TCP
+          args:
+            - --https-address=:8443
+            - --provider=openshift
+            - --openshift-service-account=grafana
+            - --upstream=http://localhost:3000
+            - --tls-cert=/etc/tls/private/tls.crt
+            - --tls-key=/etc/tls/private/tls.key
+            - --cookie-secret=SECRET_COOKIE_VALUE
+            - --pass-basic-auth=false
+            - --openshift-delegate-urls={"/":{"namespace":"moj-observability","resource":"services","verb":"get"}}
+          volumeMounts:
+            - name: tls-secret
+              mountPath: /etc/tls/private
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
         - name: grafana
           image: grafana/grafana:11.5.2
           ports:
@@ -35,9 +83,19 @@ spec:
                   name: grafana-credentials
                   key: admin-password
             - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "false"
+            - name: GF_AUTH_PROXY_ENABLED
               value: "true"
-            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
-              value: Viewer
+            - name: GF_AUTH_PROXY_HEADER_NAME
+              value: X-Forwarded-User
+            - name: GF_AUTH_PROXY_HEADER_PROPERTY
+              value: username
+            - name: GF_AUTH_PROXY_AUTO_SIGN_UP
+              value: "true"
+            - name: GF_USERS_AUTO_ASSIGN_ORG_ROLE
+              value: Editor
+            - name: GF_SERVER_ROOT_URL
+              value: https://grafana-moj-observability.apps.cluster-6ldk6.6ldk6.sandbox2187.opentlc.com
           volumeMounts:
             - name: grafana-storage
               mountPath: /var/lib/grafana
@@ -66,6 +124,9 @@ spec:
         - name: dashboards
           configMap:
             name: grafana-dashboards
+        - name: tls-secret
+          secret:
+            secretName: grafana-tls
 ---
 apiVersion: v1
 kind: Service
@@ -74,11 +135,13 @@ metadata:
   namespace: moj-observability
   labels:
     app: grafana
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: grafana-tls
 spec:
   ports:
-    - port: 3000
-      targetPort: 3000
-      name: http
+    - port: 8443
+      targetPort: 8443
+      name: proxy
   selector:
     app: grafana
 ---
@@ -92,9 +155,9 @@ spec:
     kind: Service
     name: grafana
   port:
-    targetPort: http
+    targetPort: proxy
   tls:
-    termination: edge
+    termination: reencrypt
     insecureEdgeTerminationPolicy: Redirect
 ---
 apiVersion: v1

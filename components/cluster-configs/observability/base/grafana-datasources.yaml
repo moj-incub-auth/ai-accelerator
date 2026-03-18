@@ -13,12 +13,15 @@ data:
         url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
         isDefault: true
         jsonData:
+          httpHeaderName1: Authorization
           tlsSkipVerify: true
+        secureJsonData:
+          httpHeaderValue1: "Bearer ${BEARER_TOKEN}"
         editable: true
       - name: Tempo
         type: tempo
         access: proxy
-        url: http://tempo-moj-jaegerui.moj-observability.svc.cluster.local:16686
+        url: http://tempo-tempo-moj.moj-observability.svc.cluster.local:3200
         editable: true
         jsonData:
           tracesToMetrics:
