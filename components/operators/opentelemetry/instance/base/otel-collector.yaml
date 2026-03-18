@@ -31,7 +31,7 @@ spec:
             action: upsert
     exporters:
       otlp/tempo:
-        endpoint: tempo-moj-jaegerui.moj-observability.svc.cluster.local:4317
+        endpoint: tempo-tempo-moj.moj-observability.svc.cluster.local:4317
         tls:
           insecure: true
       prometheus:
