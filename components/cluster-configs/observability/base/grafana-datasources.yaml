@@ -28,5 +28,18 @@ data:
         jsonData:
           tracesToMetrics:
             datasourceUid: prometheus
+          tracesToLogs:
+            datasourceUid: loki
           nodeGraph:
             enabled: true
+      - name: Loki
+        type: loki
+        uid: loki
+        access: proxy
+        url: https://logging-loki-gateway-http.openshift-logging.svc.cluster.local:8080/api/logs/v1/application
+        editable: true
+        jsonData:
+          tlsSkipVerify: true
+          httpHeaderName1: Authorization
+        secureJsonData:
+          httpHeaderValue1: PLACEHOLDER_TOKEN
