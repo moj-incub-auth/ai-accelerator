@@ -15,8 +15,6 @@ spec:
       labels:
         app: loki-minio
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
       containers:
         - name: minio
           image: quay.io/minio/minio:latest
