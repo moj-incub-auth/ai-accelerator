@@ -1,0 +1,11 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - cluster-logging-sub.yaml
+  - minio.yaml
+  - loki-s3-secret.yaml
+  - lokistack.yaml
+  - cluster-log-forwarder.yaml

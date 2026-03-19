@@ -1,0 +1,61 @@
+apiVersion: observability.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  name: collector
+  namespace: openshift-logging
+spec:
+  serviceAccount:
+    name: cluster-logging-collector
+  outputs:
+    - name: default-lokistack
+      type: lokiStack
+      lokiStack:
+        target:
+          name: logging-loki
+          namespace: openshift-logging
+        authentication:
+          token:
+            from: serviceAccount
+  pipelines:
+    - name: default-application
+      inputRefs:
+        - application
+      outputRefs:
+        - default-lokistack
+    - name: default-infrastructure
+      inputRefs:
+        - infrastructure
+      outputRefs:
+        - default-lokistack
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cluster-logging-collector
+  namespace: openshift-logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-logging-collector
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-logging-collector
+subjects:
+  - kind: ServiceAccount
+    name: cluster-logging-collector
+    namespace: openshift-logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-logging-collector
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces", "pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["loki.grafana.com"]
+    resources: ["application", "infrastructure"]
+    resourceNames: ["logs"]
+    verbs: ["create"]

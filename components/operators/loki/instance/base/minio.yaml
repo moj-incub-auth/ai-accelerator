@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki-minio
+  namespace: openshift-logging
+  labels:
+    app: loki-minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki-minio
+  template:
+    metadata:
+      labels:
+        app: loki-minio
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+      containers:
+        - name: minio
+          image: quay.io/minio/minio:latest
+          args:
+            - server
+            - /data
+            - --console-address
+            - ":9001"
+          env:
+            - name: MINIO_ROOT_USER
+              value: loki
+            - name: MINIO_ROOT_PASSWORD
+              value: lokisecret
+          ports:
+            - containerPort: 9000
+              name: api
+            - containerPort: 9001
+              name: console
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 10m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: loki-minio-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: loki-minio-data
+  namespace: openshift-logging
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: gp3-csi
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki-minio
+  namespace: openshift-logging
+spec:
+  ports:
+    - port: 9000
+      targetPort: 9000
+      name: api
+  selector:
+    app: loki-minio
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: loki-minio-create-bucket
+  namespace: openshift-logging
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+      restartPolicy: OnFailure
+      containers:
+        - name: mc
+          image: quay.io/minio/mc:latest
+          command: ['sh', '-c']
+          args:
+            - |
+              sleep 10
+              mc alias set myminio http://loki-minio.openshift-logging.svc.cluster.local:9000 loki lokisecret
+              mc mb --ignore-existing myminio/loki
+              echo "Bucket created."

@@ -56,6 +56,11 @@ spec:
         values:
           name: tempo-operator
           path: components/operators/tempo/aggregate/overlays/default
+      - cluster: local
+        url: https://kubernetes.default.svc
+        values:
+          name: loki-operator
+          path: components/operators/loki/aggregate/overlays/default
 
       # - cluster: local
       #   url: https://kubernetes.default.svc

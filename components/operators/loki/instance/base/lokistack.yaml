@@ -1,0 +1,42 @@
+apiVersion: loki.grafana.com/v1
+kind: LokiStack
+metadata:
+  name: logging-loki
+  namespace: openshift-logging
+spec:
+  size: 1x.extra-small
+  storage:
+    schemas:
+      - effectiveDate: "2024-10-01"
+        version: v13
+    secret:
+      name: logging-loki-s3
+      type: s3
+  storageClassName: gp3-csi
+  tenants:
+    mode: openshift-logging
+  template:
+    compactor:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+    distributor:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+    gateway:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+    indexGateway:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+    ingester:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+    querier:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+    queryFrontend:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+    ruler:
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
