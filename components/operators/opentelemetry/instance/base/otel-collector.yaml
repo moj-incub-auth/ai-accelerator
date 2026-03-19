@@ -5,6 +5,8 @@ metadata:
   namespace: moj-observability
 spec:
   mode: deployment
+  nodeSelector:
+    kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
   observability:
     metrics:
       enableMetrics: true

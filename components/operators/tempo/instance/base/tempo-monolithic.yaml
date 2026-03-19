@@ -4,6 +4,8 @@ metadata:
   name: tempo-moj
   namespace: moj-observability
 spec:
+  nodeSelector:
+    kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
   storage:
     traces:
       backend: pv

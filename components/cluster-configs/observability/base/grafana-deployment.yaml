@@ -38,6 +38,8 @@ spec:
         app: grafana
     spec:
       serviceAccountName: grafana
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
       initContainers:
         - name: init-datasources
           image: registry.access.redhat.com/ubi9/ubi-minimal:latest
