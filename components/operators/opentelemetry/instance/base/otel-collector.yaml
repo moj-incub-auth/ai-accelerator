@@ -6,7 +6,11 @@ metadata:
 spec:
   mode: deployment
   nodeSelector:
-    kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+    node-role.kubernetes.io/infra: ""
+  tolerations:
+    - key: node-role.kubernetes.io/infra
+      effect: NoSchedule
+      operator: Exists
   observability:
     metrics:
       enableMetrics: true

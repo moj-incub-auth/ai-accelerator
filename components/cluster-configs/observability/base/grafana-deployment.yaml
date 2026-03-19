@@ -39,7 +39,11 @@ spec:
     spec:
       serviceAccountName: grafana
       nodeSelector:
-        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+        node-role.kubernetes.io/infra: ""
+      tolerations:
+        - key: node-role.kubernetes.io/infra
+          effect: NoSchedule
+          operator: Exists
       initContainers:
         - name: init-datasources
           image: registry.access.redhat.com/ubi9/ubi-minimal:latest

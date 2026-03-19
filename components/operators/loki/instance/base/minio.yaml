@@ -15,6 +15,12 @@ spec:
       labels:
         app: loki-minio
     spec:
+      nodeSelector:
+        node-role.kubernetes.io/infra: ""
+      tolerations:
+        - key: node-role.kubernetes.io/infra
+          effect: NoSchedule
+          operator: Exists
       containers:
         - name: minio
           image: quay.io/minio/minio:latest
@@ -84,7 +90,11 @@ spec:
   template:
     spec:
       nodeSelector:
-        kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+        node-role.kubernetes.io/infra: ""
+      tolerations:
+        - key: node-role.kubernetes.io/infra
+          effect: NoSchedule
+          operator: Exists
       restartPolicy: OnFailure
       containers:
         - name: mc

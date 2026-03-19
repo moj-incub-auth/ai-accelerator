@@ -5,7 +5,11 @@ metadata:
   namespace: moj-observability
 spec:
   nodeSelector:
-    kubernetes.io/hostname: ip-10-0-34-204.us-east-2.compute.internal
+    node-role.kubernetes.io/infra: ""
+  tolerations:
+    - key: node-role.kubernetes.io/infra
+      effect: NoSchedule
+      operator: Exists
   storage:
     traces:
       backend: pv
