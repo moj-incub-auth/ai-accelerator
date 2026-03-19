@@ -13,10 +13,11 @@ spec:
     path: patches
   destination:
     server: https://kubernetes.default.svc
-    namespace: milvus
+    namespace: moj-vector-data
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=false
+      - ServerSideApply=true
