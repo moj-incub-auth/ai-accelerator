@@ -5,6 +5,5 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - otel-collector.yaml
-  - instrumentation-milvus.yaml
   - instrumentation-vllm.yaml
   - collector-service-monitor.yaml
