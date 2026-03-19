@@ -25,13 +25,13 @@ spec:
           annotations:
             summary: "vLLM model serving only errors"
             description: "{{ $labels.model_name }} has 0 successful requests in the last 5m"
-    - name: search-api-alerts
+    - name: search-app-alerts
       rules:
-        - alert: SearchAPIDown
-          expr: up{job="moj-search-api-metrics", namespace="milvus"} == 0
+        - alert: SearchAppDown
+          expr: up{job="moj-search-app-metrics", namespace="moj-vector-data"} == 0
           for: 2m
           labels:
             severity: critical
           annotations:
-            summary: "MOJ Search API is down"
-            description: "moj-search-api has been unreachable for 2 minutes"
+            summary: "MOJ Search App is down"
+            description: "moj-search-app has been unreachable for 2 minutes"

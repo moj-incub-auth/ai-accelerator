@@ -6,36 +6,36 @@
   "links": [],
   "panels": [
     {
-      "title": "Search API Request Rate",
+      "title": "Search App Request Rate",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "targets": [
         {
-          "expr": "sum(rate(http_requests_total{namespace=\"milvus\", job=\"moj-search-api-metrics\"}[5m])) by (method, status)",
+          "expr": "sum(rate(http_requests_total{namespace=\"moj-vector-data\"}[5m])) by (method, status)",
           "legendFormat": "{{ method }} {{ status }}"
         }
       ],
       "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
     },
     {
-      "title": "Search API Latency P95",
+      "title": "Search App Latency P95",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace=\"milvus\", job=\"moj-search-api-metrics\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace=\"moj-vector-data\"}[5m])) by (le))",
           "legendFormat": "P95"
         }
       ],
       "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
     },
     {
-      "title": "Search API Error Rate",
+      "title": "Search App Error Rate",
       "type": "stat",
       "gridPos": { "h": 8, "w": 6, "x": 0, "y": 8 },
       "targets": [
         {
-          "expr": "sum(rate(http_requests_total{namespace=\"milvus\", job=\"moj-search-api-metrics\", status=~\"5..\"}[5m])) / sum(rate(http_requests_total{namespace=\"milvus\", job=\"moj-search-api-metrics\"}[5m]))",
+          "expr": "sum(rate(http_requests_total{namespace=\"moj-vector-data\", status=~\"5..\"}[5m])) / sum(rate(http_requests_total{namespace=\"moj-vector-data\"}[5m]))",
           "legendFormat": "Error Rate"
         }
       ],
@@ -56,7 +56,7 @@
       "gridPos": { "h": 8, "w": 18, "x": 6, "y": 8 },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(milvus_query_duration_seconds_bucket{namespace=\"milvus\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(milvus_query_duration_seconds_bucket{namespace=\"moj-vector-data\"}[5m])) by (le))",
           "legendFormat": "P95 Milvus Query"
         }
       ],
@@ -64,9 +64,9 @@
     }
   ],
   "schemaVersion": 39,
-  "tags": ["search", "moj", "milvus"],
+  "tags": ["search", "moj", "moj-vector-data"],
   "templating": { "list": [] },
   "time": { "from": "now-1h", "to": "now" },
-  "title": "MOJ Search API",
+  "title": "MOJ Search App",
   "uid": "moj-search-dashboard"
 }

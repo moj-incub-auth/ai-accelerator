@@ -1,15 +1,15 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: moj-search-api-metrics
-  namespace: milvus
+  name: moj-search-app-metrics
+  namespace: moj-vector-data
   labels:
     app.kubernetes.io/part-of: moj-otel
 spec:
   endpoints:
-    - port: http
+    - port: "8080"
       path: /metrics
       interval: 30s
   selector:
     matchLabels:
-      app: moj-search-api
+      app: moj-search-app
