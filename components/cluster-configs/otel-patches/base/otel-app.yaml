@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: moj-otel-patches
+  namespace: openshift-gitops
+  labels:
+    gitops: cluster-config
+spec:
+  project: cluster-config
+  source:
+    repoURL: https://github.com/moj-incub-auth/otel.git
+    targetRevision: main
+    path: patches
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: moj-vector-data
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+      - ServerSideApply=true
