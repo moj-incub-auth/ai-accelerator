@@ -8,7 +8,7 @@ spec:
     maxNodesTotal: 7
     cores:
       min: 0
-      max: 96
+      max: 128
     memory:
       min: 0
       max: 384
@@ -17,7 +17,7 @@ spec:
         min: 0
         max: 2
   scaleDown:
-    enabled: true
+    enabled: false
     delayAfterAdd: 5m
     delayAfterDelete: 1m
     delayAfterFailure: 30s
