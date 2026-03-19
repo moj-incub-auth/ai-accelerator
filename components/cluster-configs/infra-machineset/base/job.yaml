@@ -50,7 +50,7 @@ spec:
           command: ["/bin/bash", "/scripts/job.sh"]
           env:
             - name: INSTANCE_TYPE
-              value: m6a.xlarge
+              value: m6a.4xlarge
           volumeMounts:
             - name: scripts
               mountPath: /scripts
