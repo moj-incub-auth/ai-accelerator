@@ -46,6 +46,7 @@ spec:
           effect: NoSchedule
           operator: Exists
     ingester:
+      replicas: 1
       nodeSelector:
         node-role.kubernetes.io/infra: ""
       tolerations:
