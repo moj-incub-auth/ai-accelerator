@@ -5,6 +5,7 @@ metadata:
   namespace: openshift-logging
 spec:
   size: 1x.extra-small
+  replicationFactor: 1
   storage:
     schemas:
       - effectiveDate: "2024-10-01"
